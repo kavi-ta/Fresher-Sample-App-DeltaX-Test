@@ -22,7 +22,7 @@ const SongCell=({
 
     // static url for coverImage
     const url =  "https://drive.google.com/file/d/1JhI1lZNaydTCk9dQn61zukuApEweOZlB/view?usp=sharing"
-    const urlNew = url.slice(0,25)+"thumbnail?id="+url.slice(32,url.indexOf("view")-1)
+    // const urlNew = url.slice(0,25)+"thumbnail?id="+url.slice(32,url.indexOf("view")-1)
     
 
     const [rating, setRating] = useState(0)
@@ -87,7 +87,7 @@ const SongCell=({
     <div className='container'>
     <div className='row'>
       <div className="col-md-2 col-sm-2">
-      <img className="card-img-left" height={60} width={60} src={urlNew} />
+      <img className="card-img-left" height={60} width={60} src={coverImage} />
       </div>
       <div className="col-md-3 col-sm-3">
       <div className='row'>

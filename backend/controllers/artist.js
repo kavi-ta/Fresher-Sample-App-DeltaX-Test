@@ -23,7 +23,7 @@ exports.addArtist = (req,res)=>{
     const {artistName,artistdob,artistbio} = req.body
     
     connection()
-    con.query(`INSERT INTO Artists (Name,Dob,Bio) VALUES ("${artistName}",${artistdob},"${artistbio}")`,
+    con.query(`INSERT INTO Artists (Name,Dob,Bio) VALUES ("${artistName}","${artistdob}","${artistbio}")`,
     (error,artist)=>{
         console.log(error)
         if(error){
