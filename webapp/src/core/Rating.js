@@ -10,27 +10,24 @@ const Rating=({
     artistId=null,
     songId = null
 })=> {
-  
   const {user,token} = isAuthenticated()
   const [rating,setRating] = useState(userRating)
   const [error,setError] = useState("")
-  
-  
+   
   const onRating = (event)=>{
-    
     
     var newRating = event.target.value
     
   
     if(isArtist){
-      
       artistRating(user.Id,token,artistId,{rating:newRating})
         .then(data=>{
             if(data.error){
                 setError(data.error)
             }
             else{
-               setRating(newRating)
+               
+                setRating(newRating)
             }
         })
     }

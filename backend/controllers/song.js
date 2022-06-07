@@ -1,8 +1,7 @@
 const {con} = require('../fresherSampledb.js')
-const {validationResult} = require('express-validator')
 const mysql = require('mysql')
-const { response } = require('express')
-
+const formidable = require("formidable")
+const fs = require("fs")
 // create connection
 function connection(){
     con.connect((error)=>{
@@ -16,28 +15,125 @@ function connection(){
 }
 
 exports.addSong = (req,res)=>{
-    
-    const {name,coverImage,releaseDate,path} = req.body
-    if (!name || !coverImage || !releaseDate ||!path){
-        return res.status(400).json({
-            error:"All fields are required!"
-        })
-    }
-    connection()
-    con.query(`INSERT INTO Songs (Name, CoverImage, ReleaseDate,Path) VALUES ("${name}","${coverImage}","${releaseDate}","${path}")`,
-    (error,song)=>{
-        if(error){
-            return res.status(400).json({
-                error:error
-            })
+    const isFileValid = (file)=>{
+        const type = file.mimetype.split("/").pop()
+        const validTypes =["jpg","jpeg","png","mpeg","wav","mp3"]
+        if (validTypes.indexOf(type)===-1){
+            return false
         }
-        return res.json(song)
+        return true
+    }
+    let form = new formidable.IncomingForm();
+    
+    form.keepExtensions = true
+
+    var uploadFolder = __dirname.replace("controllers","")
+    form.uploadDir = uploadFolder
+    console.log(form)
+    
+
+    form.parse(req,(err,fields,files)=>{
+       
+        if(err){
+            return res.status(400).json({
+                error:err
+                
+            })}
+            const {name,releaseDate} = fields
+            if (!name || !releaseDate ){
+                return res.status(400).json({
+                    error:"All fields are required!"
+                })
+            }
+            if (!files.coverImage.length){
+                const file = files.coverImage
+                const isValid = isFileValid(file)
+                const fileName = Date.now()+"-"+encodeURIComponent(file.originalFilename.replace(/\s/g,"-"));
+                var coverImageLocation = `files//${fileName}`
+                if (!isValid){
+                    return res.status(400).json({
+                        message:"not a valid file"
+                    })
+                }
+                try{
+                    
+                    fs.renameSync(file.filepath, uploadFolder+"\\files\\"+fileName)
+                }
+                catch(error){
+                    res.status(400).json({
+                        error:error
+                    })
+                } 
+            }
+
+            if (!files.coverImage.length){
+                const file = files.coverImage
+                const isValid = isFileValid(file)
+                const fileName = "files/"+Date.now()+"-"+encodeURIComponent(file.originalFilename.replace(/\s/g,"-"));
+                // const filelocation = `${Date.now()}-${fileName}`
+                var audiofileLocation = `files/${fileName}`
+                if (!isValid){
+                    return res.status(400).json({
+                        message:"not a valid file"
+                    })
+                }
+                try{
+                    
+                    fs.renameSync(file.filepath, uploadFolder+"\\"+fileName)
+                }
+                catch(error){
+                    console.log(error)
+                }
+                // connection()
+               
+                // con.query(`INSERT INTO image(file) VALUES("files/${filelocation}")`,
+                // (error,response)=>{
+                //     if(error){
+                //         return res.json({
+                //             error:error
+                //         })
+                //     }
+                //     else{
+                //         return res.json({
+                //             response:"successfullly added to db"
+                //         })
+                //     }
+                // })
+            }
+
+            if (!files.audioFile.length){
+                const audiofile = files.audioFile
+                const isValid = isFileValid(audiofile)
+                const fileName = Date.now()+"-"+encodeURIComponent(audiofile.originalFilename.replace(/\s/g,"-"));
+                // const filelocation = `${Date.now()}-${fileName}`
+                var audiofileLocation = `audiofiles//${fileName}`
+                if (!isValid){
+                    return res.status(400).json({
+                        message:"not a valid file"
+                    })
+                }
+                try{
+                    
+                    fs.renameSync(audiofile.filepath, uploadFolder+"\\audiofiles\\"+fileName)
+                }
+                catch(error){
+                    console.log(error)
+                }
+                
+            }
+            console.log(uploadFolder,audiofileLocation,coverImageLocation)
+            connection()
+            con.query(`INSERT INTO Songs (Name, CoverImage, ReleaseDate,AudioFile) VALUES ("${name}","${coverImageLocation}","${releaseDate}","${audiofileLocation}")`,
+            (error,song)=>{
+                if(error){
+                    return res.status(400).json({
+                        error:error
+                    })
+                }
+                return res.json(song)
+            })
     })
-}
-
-
-
-
+    }
 
 exports.getAllSongs = (req,res)=>{
     let limit = req.query.limit ? parseInt(req.query.limit) : null
@@ -45,7 +141,7 @@ exports.getAllSongs = (req,res)=>{
     
     connection()
     if(limit){
-        con.query(`SELECT Songs.Id as SongId, Songs.Name, Songs.CoverImage , Songs.ReleaseDate, Songs.Path, IFNULL(Rating,0) as Rating from Songs left join (SELECT SongId,Name, CoverImage,ReleaseDate, Path,CAST(AVG(Rating) AS INT) AS Rating FROM Songs INNER JOIN UserSongRating ON Songs.Id = UserSongRating.SongId GROUP BY Songs.Id) as T1 on Songs.Id = T1.SongId ORDER BY ${sortBy} DESC LIMIT ${limit}`,
+        con.query(`SELECT Songs.Id as SongId, Songs.Name, Songs.CoverImage , Songs.ReleaseDate, Songs.AudioFile, IFNULL(Rating,0) as Rating from Songs left join (SELECT SongId,Name, CoverImage,ReleaseDate, AudioFile,CAST(AVG(Rating) AS INT) AS Rating FROM Songs INNER JOIN UserSongRating ON Songs.Id = UserSongRating.SongId GROUP BY Songs.Id) as T1 on Songs.Id = T1.SongId ORDER BY ${sortBy} DESC LIMIT ${limit}`,
         (error,songs)=>{
             if(error){
                 return res.status(400).json({
@@ -66,12 +162,9 @@ exports.getAllSongs = (req,res)=>{
                 })
             }
           return res.json(songs)
-        }
-        
+        }   
         )
     }
-    
-
   }
 
 exports.getSongById = (req,res,next,Id)=>{
@@ -106,20 +199,18 @@ exports.addArtistToSong = (req,res)=>{
     for(let i=0;i<artistIds.length;i++){
         values.push([parseInt(artistIds[i]),songId])
     }
-    console.log(values)
-    // map the artist Id with song
-    con.query(`INSERT INTO ArtistSongMapping (ArtistId,SongId) VALUES (?,?) on duplicate key update ArtistId=VALUES(ArtistId), SongId=VALUES(SongId)`,[values],
+    con.query(`INSERT INTO ArtistSongMapping(ArtistId,SongId) VALUES ? on duplicate key update ArtistId=VALUES(ArtistId), SongId=VALUES(SongId)`,[values],
     (error,result)=>{
         if(error){
             return res.status(400).json({
                 error:error
             })
         }
+        console.log(result)
         return res.json(result)
     }
     )
 }
-
 
 exports.getArtistsForASong =(req,res)=>{
     const songId = req.song.Id
@@ -134,4 +225,3 @@ exports.getArtistsForASong =(req,res)=>{
         return res.json(result)
     })
 }
-

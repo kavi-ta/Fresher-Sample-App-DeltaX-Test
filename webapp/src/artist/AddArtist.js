@@ -25,15 +25,12 @@ const AddArtist=({history})=> {
     const onSubmit = (event)=>{
         
         event.preventDefault()
-        
-       
         addArtist(user.Id,token, {artistName,artistdob,artistbio})
         .then(data=>{
             if(data.error){
                 setNewArtistValues({...newArtistValues,artisterror:data.error})
             }
-            else{
-                
+            else{ 
                 setNewArtistValues({
                     ...newArtistValues,
                     artistName:"",
@@ -41,7 +38,6 @@ const AddArtist=({history})=> {
                     artistdob:"",
                     artisterror:false,
                     artistsuccess:true
-
                 })
             }
             setTimeout(()=>(
@@ -54,16 +50,10 @@ const AddArtist=({history})=> {
         if(artistsuccess){
             return(
                 <div className='alert alert-success mt-3'>
-                
                 <h4>Artist added successfully</h4>
-               
-    
-                </div>
-                 
+                </div>  
             )
         }
-        
-
     }
     const errorMessage =()=>{
         if (artisterror){
@@ -83,7 +73,11 @@ const AddArtist=({history})=> {
             <div class="col-sm-12">
             <input 
             onChange={handleChange("artistName")}
-            type="text"  class="form-control" value={artistName} name="artistName" placeholder="Enter Name">
+            type="text"  class="form-control" 
+            value={artistName} name="artistName" 
+            placeholder="Enter Name"
+            required
+            minLength={3}>
             </input>
             </div>
             </div>  
@@ -91,6 +85,7 @@ const AddArtist=({history})=> {
             <label  class="col-lg-4 col-form-label">Date of Birth</label>
             <div class="col-sm-12">
             <input
+                required
                 onChange={handleChange("artistdob")}
                 type ="date"
                 name="artistdob"
@@ -99,7 +94,6 @@ const AddArtist=({history})=> {
                 />
             </div>
             </div>
-
             <div class="mb-3 row">
             <label  class="col-lg-4 col-form-label">Bio</label>
             <div class="col-sm-12">
@@ -107,14 +101,17 @@ const AddArtist=({history})=> {
             onChange={handleChange("artistbio")}
             type="text" 
             name="artistbio"
-                value = {artistbio}
-            class="form-control" placeholder="Enter Name">
+            value = {artistbio}
+            class="form-control" 
+            placeholder="Enter Name"
+            required
+            minLength={3}
+            >
             </input>
             </div>
             </div>
-           
             <button type="submit"  onClick={onSubmit} className="btn btn-outline-success m-2">
-                Add Artist
+            Add Artist
             </button>
         </form>
         </div>

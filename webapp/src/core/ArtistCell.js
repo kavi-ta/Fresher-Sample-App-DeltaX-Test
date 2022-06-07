@@ -13,9 +13,7 @@ const ArtistCell=({
     
     let months = ["-","Jan","Feb","Mar","Apr","May","Jun","July","Aug","Sept","Oct","Nov","Dec"]
     const [rating, setRating] = useState(0)
-  
     const [error, setError] = useState(false)
-   
     const artistId = artist.ArtistId
     const artistName = artist.Name
     const artistBio = artist.Bio
@@ -23,11 +21,11 @@ const ArtistCell=({
     const artistdob = artist.DOB
     const {user,token} = isAuthenticated()
     
-    const dob = artistdob=="0000-00-00"? "01 Jan, 2000" : artistdob.slice(8,10)+" "+ months[parseInt(artistdob.slice(5,7))]+", "+artistdob.slice(0,4)
-
+    const dob =  artistdob.slice(8,10)+" "+ months[parseInt(artistdob.slice(5,7))]+", "+artistdob.slice(0,4)
     const [artistSongs,setArtistSongs] = useState([])
     const preload = ()=>{
-        getArtistRating(user.Id,token,artistId)
+        if(isAuthenticated()){
+          getArtistRating(user.Id,token,artistId)
         .then(
             data=>{
                 if(data.error){
@@ -37,15 +35,15 @@ const ArtistCell=({
                  
                     if(data.rating){
                         setRating(data.rating)
+                        console.log(user,token,data.rating)
                     }
                     else{
                         setRating(0)
                     }
-                   
                 }
             }
         )
-
+          }
           getSongsByArtistId(artistId).then(
             data=>{
               if(data.error){
@@ -68,6 +66,12 @@ const ArtistCell=({
       preload()
     }, [reload])
     
+    const rateArtistMessage = (e)=>{
+      if(!isAuthenticated()){
+        return alert("Sign in to rate artist")    
+      }
+      preload()
+    }
     
     
   return (
@@ -111,9 +115,10 @@ const ArtistCell=({
       </div>
       
       <div className="col-md-2 col-sm-2">
-      <button onClick = {()=>console.log(artistId, artistName)} type="button" class="btn rate" data-bs-toggle="modal" data-bs-target={"#artistModal"+artistId}>
+      <button onClick = {rateArtistMessage} type="button" class="btn rate" data-bs-toggle="modal" data-bs-target={"#artistModal"+artistId}>
       Rate Artist
       </button>
+      {isAuthenticated() && 
       <div class="modal fade" id={"artistModal"+artistId}  tabindex="-1" data-bs-backdrop="static" aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div class="modal-dialog" >
         <div class="modal-content">
@@ -135,14 +140,10 @@ const ArtistCell=({
       </div>
     </div>
   </div>
+      </div>}
       </div>
-      </div>
-
     </div>
-
-
     </div>
-    
     </div>
    
 </div>

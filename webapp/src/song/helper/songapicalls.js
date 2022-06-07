@@ -22,25 +22,20 @@ export const getSongs = (sortBy,limit)=>{
     
 }
 
-export const addSong = (userId,token,song)=>{
-    
+export const addSong = (userId,token,formdata)=>{
     return fetch(`${API}/song/create/${userId}`,
     {
         method:"POST",
         headers:{
             Accept:'application/json',
-            "Content-Type":"application/json",
             Authorization: `Bearer ${token}` 
         },
-        body:JSON.stringify(song)
+        body:formdata
     })
     .then(response=>{
-        
         return response.json()
-        
     })
-    .catch(err=>console.log(err))
-    
+    .catch(err=>console.log(err))    
 }
 
 
@@ -48,7 +43,6 @@ export const addArtistToSong = (userId, token, songId, artistIds)=>{
    console.log("JSON", JSON.stringify(artistIds))
     return fetch(`${API}/addartisttosong/${userId}/${songId}`,{
         method:"POST",
-        
         headers:{
           Accept:"application/json",
           "Content-Type":"application/json",
@@ -57,14 +51,9 @@ export const addArtistToSong = (userId, token, songId, artistIds)=>{
         body:JSON.stringify(artistIds)
     })
     .then(response=>{
-        
-        return response.json()
-        
+        return response.json() 
     })
-    .catch(err=>console.log(err))
-        
-        
-            
+    .catch(err=>console.log(err))      
     }
 
 
@@ -73,9 +62,8 @@ export const getArtistsBySongId = (songId)=>{
             method:"GET"
         })
         .then(response=>{
-        
             return response.json()
-            
         })
         .catch(err=>console.log(err))
     }
+

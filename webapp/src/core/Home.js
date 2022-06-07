@@ -9,13 +9,11 @@ import SongCell from "./SongCell"
 
 
 const Home =()=>{
-  
    const [songs, setSongs] = useState([])
    const [songError, setSongError] = useState(false)
    const [artists,setArtists] = useState([])
    const [artistError, setArtistError] = useState(false)
    const [reload, setReload] = useState(false)
-   console.log("reload",reload)
    const preload =()=>{
        getSongs("Rating",10)
        .then(data=>{
@@ -23,6 +21,7 @@ const Home =()=>{
             setSongError(data.error)
            }
            else{
+              
                setSongs(data)
            }
        })
@@ -34,7 +33,6 @@ const Home =()=>{
            }
            else{
                setArtists(data)
-               console.log(data)
            }
        })   
    }
@@ -42,10 +40,8 @@ const Home =()=>{
        preload()
    },[reload])
 
-   
     return (
         <Base>
-        
         <div className="row ">
         <h1 className="heads"> Top 10 Songs</h1>
         <div className="row">
@@ -83,12 +79,7 @@ const Home =()=>{
             
             )})}
         
-        </div>
-        
-         
-      
-        
-            
+        </div> 
         </div>
         </div>
         </Base>

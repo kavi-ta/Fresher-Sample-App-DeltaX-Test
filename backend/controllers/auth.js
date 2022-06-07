@@ -70,6 +70,11 @@ exports.signin = (req,res)=>{
         }
         else{
         console.log(user[0])
+        if(name!=user[0].Name){
+            return res.status(400).json({
+                error:"Name does not match!"
+            })
+        }
         // create token
         const token = jwt.sign({Id:user[0].Id},process.env.SECRET)
         // put token in cookie

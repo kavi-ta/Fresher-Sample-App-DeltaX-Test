@@ -3,7 +3,6 @@ import {BrowserRouter,Switch, Route} from "react-router-dom"
 import AddArtist from './artist/AddArtist'
 import PrivateRoute from './auth/PrivateRoute'
 import Home from './core/Home'
-import Menu from './core/Menu'
 import AddSong from './song/AddSong'
 import Signin from './user/Signin'
 

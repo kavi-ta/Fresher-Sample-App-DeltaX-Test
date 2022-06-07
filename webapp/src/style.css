@@ -4,6 +4,10 @@ body{
 
 input[type="radio"]{
     display:none ;
+    
+}
+input[type="text"]{
+    text-transform: capitalize;
 }
 
 .star{
@@ -22,7 +26,6 @@ input[type="radio"]{
     right: 150px;
     width: 200px;
     height: 10px;
-
 }
 
 .navbar{
@@ -33,7 +36,6 @@ input[type="radio"]{
 font-size: 12px;
 color:black;
 background:#DBDFFD;
-
 }
 
 .rate :focus :hover{
@@ -48,12 +50,9 @@ background:#DBDFFD;
 .btn-outline{
     color:#3e1da1;
     font-weight: 500;
-    background-color: #c1c1c7;
-    
-  
-
-    
+    background-color: #c1c1c7;   
 }
+
 form{
     color:#c1c1c7
 }

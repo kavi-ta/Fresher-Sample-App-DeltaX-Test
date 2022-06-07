@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const {isSignedIn,isAuthenticated} = require("../controllers/auth")
-const {addSong, getAllSongs, getSong, getSongById, addArtistToSong, getArtistsForASong} = require("../controllers/song")
+const {addSong, getAllSongs, getSong, getSongById, addArtistToSong, getArtistsForASong, addimage, getimage , addsong} = require("../controllers/song")
 const { getUserById } = require("../controllers/user")
 
 

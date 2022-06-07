@@ -13,10 +13,10 @@ const AddSong=({history})=> {
         releaseDate :"",
         artists:[],
         artistIds:[],
-        path:"",
+        audioFile:"",
         error:"",
         success:false,
-        formData:""
+        formData:new FormData()
     })
     
     
@@ -30,11 +30,11 @@ const AddSong=({history})=> {
 })
     const {artistName,artistdob,artistbio,artisterror,artistsuccess} = newArtistValues
     
-    const {name,artistIds,coverImage,releaseDate,path,error,success,artists,formData} = values
+    const {name,artistIds,coverImage,releaseDate,audioFile,error,success,artists,formData} = values
     const {user,token} = isAuthenticated()
-  
+
     const handleChange = (Name)=>(event)=>{
-       
+       console.log(event.target.value)
         if (Name=== "artistIds"){
             let addArtists = artistIds
             if(event.target.checked){
@@ -49,10 +49,10 @@ const AddSong=({history})=> {
             
         }
         else{
-            const value = Name==="coverImage"? event.target.files[0]: event.target.value
+            const value = Name==="coverImage" || Name==="audioFile" ? event.target.files[0]: event.target.value
             formData.set(Name,value)
-            setValues({...values,[Name]:value,formData:new FormData()})
-            console.log(formData)
+            setValues({...values,[Name]:value})
+            
             // setValues({...values,[Name]:event.target.value,formData:new FormData()})}
     }
     }
@@ -64,7 +64,7 @@ const AddSong=({history})=> {
             }
             else{
                 
-                setValues({...values, artists:data, formData: new FormData()})
+                setValues({...values, artists:data})
             }
             
         })
@@ -78,16 +78,12 @@ const AddSong=({history})=> {
 
     const addArtistOnClick=(event)=>{
         event.preventDefault()
-        console.log(artistdob);
-        console.log(artistName);
-        console.log(artistbio);
         addArtist(user.Id,token,{artistName,artistdob,artistbio})
         .then(data=>{
             if(data.error){
                 setNewArtistValues({...newArtistValues,artisterror:data.error})
             }
             else{
-                console.log(data)
                 setNewArtistValues({
                     ...newArtistValues,
                     artistName:"",
@@ -102,34 +98,23 @@ const AddSong=({history})=> {
         })
     }
     const successMessage= ()=>{
-        // 
-        console.log(artistsuccess)
         if(artistsuccess){
             preload()
             setTimeout(()=>(
                 
                 setNewArtistValues({...newArtistValues,artistsuccess:false})
-            ),1000)
-            
-            
+            ),1000)            
             return(
                 <div className='alert alert-success mt-3'>
-                
                 <h4>Artist added successfully</h4>
-               
-    
                 </div>
                  
             )
         }
-        if(success){
-            
+        if(success){ 
             return(
                 <div className='alert alert-success mt-3'>
-                
                 <h4>Song added successfully</h4>
-               
-    
                 </div>
                  
             )
@@ -148,9 +133,7 @@ const AddSong=({history})=> {
     }
 
     const addArtistToTheSongFunction =(songId)=>{
-       
-
-        console.log(user.Id,token,songId,artistIds)
+        console.log(artistIds)
         addArtistToSong(user.Id, token, songId, {artistIds})
         .then(data=>{
             if(data.error){
@@ -165,8 +148,8 @@ const AddSong=({history})=> {
                     releaseDate :"",
                     artists:[],
                     artistIds:[],
-                    path:"",
-                    error:false,
+                    audioFile:"",
+                    error:"",
                     success:true,  
                 })
             }
@@ -180,14 +163,19 @@ const AddSong=({history})=> {
    
     const onSubmit = (event)=>{
         event.preventDefault()
+        
         setValues({...values,error:""})
-        console.log({name,coverImage,releaseDate,path})
-        addSong(user.Id,token,{name,coverImage,releaseDate,path})
+        for(var pair of formData.entries()){
+            console.log(pair[0],pair[1])
+        }
+        console.log({name,coverImage,releaseDate,audioFile})
+        addSong(user.Id,token,formData)
         .then(data=>{
             if(data.error){
                 setValues({...values,error:data.error})
             }
             else{
+                console.log(data)
                 addArtistToTheSongFunction(data.insertId)
             }      
         })
@@ -200,9 +188,15 @@ const AddSong=({history})=> {
         <div className="col-md-6 col-lg-6 offset-sm-3 text-left">
         <form >
             <div class="mb-3 row">
-            <label  class="col-lg-4 col-form-label" required>Name</label>
+            <label  class="col-lg-4 col-form-label" >Name</label>
             <div class="col-sm-12">
-            <input type="text" onChange={handleChange("name")} class="form-control" placeholder="Enter Name">
+            <input type="text"
+            required
+            
+            onChange={handleChange("name")} 
+            class="form-control" 
+            placeholder="Enter Name"
+            minLength={3}>
             </input>
             </div>
             </div>
@@ -210,6 +204,7 @@ const AddSong=({history})=> {
             <label  class="col-lg-4 col-form-label">Add a Cover Photo</label>
             <div class="col-sm-12">
             <input type="file" 
+            required
             onChange={handleChange("coverImage")} 
             class="form-control"
             accept='image'
@@ -261,7 +256,8 @@ const AddSong=({history})=> {
                         <label  class="col-lg-4 col-form-label text-black">Name</label>
                         <div class="col-sm-12">
                         <input 
-                    onChange={handleNewArtistChange("artistName")}
+                        required
+                        onChange={handleNewArtistChange("artistName")}
                         type="text" value={artistName} name="artistName" class="form-control" placeholder="Enter Name" defaultValue={artistName}>
                         </input>
                         </div>
@@ -272,6 +268,7 @@ const AddSong=({history})=> {
                         <label  class="col-lg-4 col-form-label text-black">Date of Birth</label>
                         <div class="col-sm-12">
                         <input
+                            required
                             onChange={handleNewArtistChange("artistdob")}
                             type ="date"
                             name="artistdob"
@@ -283,6 +280,7 @@ const AddSong=({history})=> {
                         <label  class="col-lg-4 col-form-label text-black">Bio</label>
                         <div class="col-sm-12">
                         <input 
+                        required
                         onChange={handleNewArtistChange("artistbio")}
                         type="text"  
                         name="artistbio"
@@ -305,17 +303,15 @@ const AddSong=({history})=> {
 
             <form className="dropdown-menu p-4 " 
             aria-labelledby='dropdownMenuButton1'
-            >
-                
+            >   
                 <ul>
                 {artists && artists.map((artist,index)=>(
-                    <li    className ="list-group-item" name="artistIds" key = {index} value={artist.ArtistId}>
+                    <li   className ="list-group-item" name="artistIds" key = {index} value={artist.ArtistId}>
                     <input onChange={handleChange("artistIds")} value={artist.ArtistId} className='form-check-input me-1' type="checkbox"/>{artist.Name}</li>
                 ))}
                 
                 </ul>
             </form>
-               
                
             </div>
             </div>
@@ -323,7 +319,12 @@ const AddSong=({history})=> {
             <div class="mb-3 row">
             <label  class="col-lg-4 col-form-label">Audio File</label>
             <div class="col-sm-12">
-            <input type="file" onChange={handleChange("path")} class="form-control" placeholder="Enter Link to audio file">
+            <input type="file" 
+            required
+            onChange={handleChange("audioFile")} 
+            name="audioFile"
+            class="form-control" 
+            placeholder="Enter Link to audio file">
             </input>
             </div>
             </div>
@@ -336,8 +337,7 @@ const AddSong=({history})=> {
       );
 
   return (
-    <Base
-    title="Add a New Song">
+    <Base>
     {errorMessage()}
     {successMessage()}
     {createSongForm()}

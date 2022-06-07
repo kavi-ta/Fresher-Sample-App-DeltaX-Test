@@ -1,4 +1,4 @@
-import React, {Fragment} from "react"
+import React, {useState} from "react"
 import {Link,  withRouter} from 'react-router-dom'
 import { isAuthenticated, signout } from "../auth/helper/authapicalls"
 
@@ -12,7 +12,6 @@ const currentTab = (history,path)=>{
         return {color:"grey"}
     }
 }
-
 
 const Menu = ({history})=>{
     return (
@@ -45,9 +44,6 @@ const Menu = ({history})=>{
             </span>
             
             </li> )}
-
-            
-
             <li className='nav-item'>
             <Link 
             style={currentTab(history,"/")} 
@@ -77,15 +73,15 @@ const Menu = ({history})=>{
             </li>
 
             </ul>
-            <form class="d-flex">
-        
-<div class="input-group mb-3">
-<input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2"/>
-<button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
-</div></form>
-        </div>
-        </nav>
-    </div>
+            <form class="d-flex ">
+            <div class="input-group mt-2 mb-2">
+            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2"/>
+            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Search</button>
+            </div>
+        </form>
+                </div>
+                </nav>
+            </div>
             
             
     )

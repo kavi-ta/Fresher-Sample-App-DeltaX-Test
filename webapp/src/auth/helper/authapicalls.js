@@ -1,7 +1,6 @@
 import { API } from "../../backend";
 
 export const signin = (user)=>{
-    
     return fetch(`${API}/signin`,
     {
         method:"POST",
@@ -12,14 +11,12 @@ export const signin = (user)=>{
         body:JSON.stringify(user)
     })
     .then(response=>{
-        console.log(response,"heres the response")
         return response.json()
     })
-    .catch(err=>console.log("here is the error",err))
+    .catch(err=>console.log(err))
 }
 
 export const authenticate  = (data,next)=>{
-    console.log("here in authenticate")
     if(typeof window!="undefined"){
         localStorage.setItem("jwt",JSON.stringify(data))
         next()
@@ -47,5 +44,4 @@ export const isAuthenticated = ()=>{
     }else{
         return false
     }
-
 }

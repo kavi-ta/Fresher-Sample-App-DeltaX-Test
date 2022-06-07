@@ -16,7 +16,7 @@ IF EXISTS Artists,ArtistSongMapping, Users,Songs,
  Name VARCHAR(200) NOT NULL ,
  CoverImage VARCHAR(512) NOT NULL,
  ReleaseDate date,
- Path varchar(512) NOT NULL
+ AudioFile varchar(512) NOT NULL
  );
 
 
@@ -37,7 +37,7 @@ IF EXISTS Artists,ArtistSongMapping, Users,Songs,
  Id INT PRIMARY KEY auto_increment,
  UserId Int references Users(Id),
  SongId Int references Songs(Id),
- Rating Int,
+ Rating Int not null,
  CONSTRAINT User_Song_Unique UNIQUE (UserId , SongId)
  );
  
@@ -45,16 +45,17 @@ IF EXISTS Artists,ArtistSongMapping, Users,Songs,
  Id INT PRIMARY KEY auto_increment,
  UserId Int references Users(Id),
  ArtistId Int references Artists(Id),
- Rating Int,
+ Rating Int not null,
  CONSTRAINT User_Artist_Unique UNIQUE (UserId , ArtistId)
  );
   
 INSERT INTO Users(Name,Email)
 VALUES("Shilpa Kumari", "shilpa@gmail.com"),
 		("Gitika Sunam", "gitikas@gmail.com"),
-        ("Ganesh","ganesh@gmail.com");
+        ("Ganesh","ganesh@gmail.com"),
+        ("Monu Thakur", "monu@gmail.com");
 
-INSERT INTO Songs(Name, CoverImage, ReleaseDate , Path )
+INSERT INTO Songs(Name, CoverImage, ReleaseDate , AudioFile )
 VALUES ("Levitating","https://i.ytimg.com/vi/-Ileb6iOIag/mqdefault.jpg","2019-02-01","levitating.mp3"),
 	   ("Holding Me Back","https://upload.wikimedia.org/wikipedia/en/d/d2/Illuminate_%28Official_Album_Cover%29_by_Shawn_Mendes.png","2020-04-02","holdingmeback.mp3"),
        ("I Don't Wanna Live Forever","https://upload.wikimedia.org/wikipedia/en/8/82/Zayn_%26_Taylor_Swift_-_I_Don%27t_Wanna_Live_Forever_%28Official_Single_Cover%29.png","2012-05-19","idontwannaliveforever.mp3"),

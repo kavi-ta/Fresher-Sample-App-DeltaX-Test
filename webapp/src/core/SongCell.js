@@ -14,26 +14,19 @@ const SongCell=({
     const songName = song.Name
     const coverImage = song.CoverImage
     const releaseDate = song.ReleaseDate.slice(0,10)
-    const path = song.Path
+    const path = song.AudioFile
     const songRating = song.Rating
     let months = ["-","Jan","Feb","Mar","Apr","May","Jun","July","Aug","Sept","Oct","Nov","Dec"]
-    
     const date= releaseDate.slice(8,10)+" "+ months[parseInt(releaseDate.slice(5,7))]+", "+releaseDate.slice(0,4)
-
-    // static url for coverImage
-    const url =  "https://drive.google.com/file/d/1JhI1lZNaydTCk9dQn61zukuApEweOZlB/view?usp=sharing"
-    // const urlNew = url.slice(0,25)+"thumbnail?id="+url.slice(32,url.indexOf("view")-1)
-    
-
     const [rating, setRating] = useState(0)
-    const [isRated,setIsRated] = useState(false)
     const [error, setError] = useState(false)
     const [artists,setArtists] = useState([])
     const [songArtists,setSongArtists] = useState([])
     const {user,token} = isAuthenticated()
+   
     const preload = ()=>{
       
-        getSongRating(user.Id,token,songId)
+        if(isAuthenticated()){getSongRating(user.Id,token,songId)
         .then(
             data=>{
                 if(data.error){
@@ -42,21 +35,12 @@ const SongCell=({
                 else{
                     
                     if(data.rating){
-                        
-                        setIsRated(true)
                         setRating(data.rating)
                     }
                     else{
-                        
-                        setIsRated(false)
                         setRating(0)
                     }
-                    
-                }
-            }
-        )
-
-      
+                }})} 
           // get the artists for the song
           getArtistsBySongId(song.SongId).then(
             data=>{
@@ -64,7 +48,6 @@ const SongCell=({
                 setError(data.error)
               }
               else{
-                
                 let a = []
                 for(let i=0;i<data.length;i++){
                   a.push(data[i].Name)
@@ -76,11 +59,16 @@ const SongCell=({
           setReload(false)
     }
 
-
     useEffect(() => {
       preload()
     }, [reload])
-    
+
+    const rateSongMessage = (e)=>{
+      if(!isAuthenticated()){
+        return alert("Sign in to rate song")    
+      }
+      preload()
+    }
   return (
   <div className='card'>
   <div className="card-body">
@@ -114,10 +102,10 @@ const SongCell=({
       </div>
       
       <div className="col-md-2 col-sm-2">
-      <button  type="button" class="btn rate" data-bs-toggle="modal" data-bs-target={"#songModal" + songId}>
+      <button  type="button" onClick={rateSongMessage} class="btn rate" data-bs-toggle="modal" data-bs-target={"#songModal" + songId}>
       Rate Song
       </button>
-      <div class="modal fade" id={"songModal" + songId} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      {isAuthenticated() && <div class="modal fade" style={{display: isAuthenticated()}}id={"songModal" + songId} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="false">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
@@ -137,15 +125,11 @@ const SongCell=({
             </div>
           </div>
       </div>
+      </div>}
       </div>
-      </div>
-
     </div>
     </div>
-    
-        
       </div>
-    
   </div>
   )
 }

@@ -56,7 +56,7 @@ const Signin = ()=>{
             <div class="mb-3 row">
                 <label  class="col-sm-2 col-form-label">Name</label>
                 <div class="col-sm-12">
-                <input type="text" onChange={handleChange("name")} class="form-control" value = {name} placeholder="Enter Name">
+                <input type="text" required onChange={handleChange("name")} class="form-control" value = {name} placeholder="Enter Name">
                 </input>
                 </div>
 
@@ -65,7 +65,7 @@ const Signin = ()=>{
             <div class="mb-3 row">
                 <label  class="col-sm-2 col-form-label">Email</label>
                 <div class="col-sm-12">
-                <input type="text" onChange={handleChange("email")} class="form-control" value={email} placeholder="Enter Email">
+                <input type="email" required onChange={handleChange("email")} class="form-control" value={email} placeholder="Enter Email">
                 </input>
                 </div>
 
