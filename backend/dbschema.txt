@@ -1,0 +1,46 @@
+-- CREATE DATABASE FresherSampleApp;
+
+DROP TABLE 
+IF EXISTS Artists,ArtistSongMapping, Users,Songs,
+ UserSongRating;
+ 
+ CREATE TABLE Users (
+ Id INT PRIMARY KEY auto_increment,
+ Name VARCHAR(200) NOT NULL,
+ Email VARCHAR(200) unique NOT NULL);
+ 
+ CREATE TABLE Songs (
+ Id INT PRIMARY KEY auto_increment,
+ Name VARCHAR(200) NOT NULL ,
+ CoverImage VARCHAR(512) NOT NULL,
+ ReleaseDate date,
+ Path varchar(512) NOT NULL
+ );
+ 
+ CREATE TABLE Artists(
+ Id INT PRIMARY KEY auto_increment,
+ Name VARCHAR(200) NOT NULL ,
+ Bio VARCHAR(200));
+ 
+ CREATE TABLE ArtistSongMapping(
+ Id INT PRIMARY KEY auto_increment,
+ ArtistId Int references Artists(Id),
+ SongId Int references Songs(Id)
+ );
+ 
+ CREATE TABLE UserSongRating(
+ Id INT PRIMARY KEY auto_increment,
+ UserId Int references Users(Id),
+ SongId Int references Songs(Id),
+ Rating Int
+ );
+ 
+ 
+INSERT INTO Users(Name,Email)
+VALUES("Shilpa Kumari", "shilpa@gmail.com"),
+		("Gitika Sunam", "gitikas@gmail.com");
+
+
+ 
+ 
+ 
